@@ -229,8 +229,8 @@ docker-compose down
 - JWT-based authentication
 - BCrypt password hashing (strength 12)
 - Role-based access control (ADMIN, CUSTOMER, SELLER)
-- Refresh token rotation
-- Account lockout after failed attempts
+- Refresh token support
+- Account security mechanisms (extensible for lockout policies)
 - SQL injection prevention (JPA parameterized queries)
 - Input validation
 - CORS configuration
