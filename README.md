@@ -1,0 +1,267 @@
+# E-Commerce Backend API
+
+A professional, production-ready e-commerce backend built with Spring Boot 3.x, implementing Clean Architecture and Domain-Driven Design principles.
+
+## 🚀 Features
+
+- **User Management**: Registration, authentication, profile management
+- **Product Catalog**: Categories, products, images, inventory tracking
+- **Shopping Cart**: Add/remove items, guest cart, merge on login
+- **Order Management**: Order lifecycle, cancellation, status tracking
+- **Payment Integration**: Stripe and PayPal support
+- **Shipping**: Carrier integration, tracking
+- **Reviews & Ratings**: Product reviews with moderation
+- **Promotions**: Discount codes, promotional campaigns
+
+## 🏗 Architecture
+
+```
+src/main/java/com/ecommerce/
+├── api/                  # REST Controllers
+│   ├── v1/              # API version 1
+│   └── exception/       # Global exception handling
+├── application/          # Application Layer
+│   ├── dto/             # Data Transfer Objects
+│   ├── mapper/          # MapStruct mappers
+│   └── service/         # Application services
+├── domain/               # Domain Layer
+│   ├── user/            # User aggregate
+│   ├── product/         # Product aggregate
+│   ├── order/           # Order aggregate
+│   ├── cart/            # Cart aggregate
+│   ├── payment/         # Payment aggregate
+│   ├── shipping/        # Shipping aggregate
+│   ├── review/          # Review aggregate
+│   ├── promotion/       # Promotion aggregate
+│   └── exception/       # Domain exceptions
+└── infrastructure/       # Infrastructure Layer
+    ├── config/          # Configuration classes
+    ├── security/        # JWT, Spring Security
+    └── repository/      # JPA repositories
+```
+
+## 🛠 Tech Stack
+
+- **Java 17**
+- **Spring Boot 3.2.x**
+- **Spring Security** with JWT
+- **Spring Data JPA** with Hibernate
+- **PostgreSQL** (primary database)
+- **Redis** (caching)
+- **Flyway** (database migrations)
+- **MapStruct** (object mapping)
+- **SpringDoc OpenAPI** (API documentation)
+- **JUnit 5 & Mockito** (testing)
+- **Docker** (containerization)
+
+## 📋 Prerequisites
+
+- Java 17 or higher
+- Maven 3.8+
+- Docker & Docker Compose
+- PostgreSQL 16 (or use Docker)
+- Redis 7 (or use Docker)
+
+## 🚀 Quick Start
+
+### 1. Clone the repository
+
+```bash
+cd backend
+```
+
+### 2. Start infrastructure with Docker
+
+```bash
+docker-compose up -d postgres redis mailhog
+```
+
+### 3. Run the application
+
+```bash
+# With Maven
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Or with Java
+java -jar target/ecommerce-backend-1.0.0-SNAPSHOT.jar --spring.profiles.active=dev
+```
+
+### 4. Access the application
+
+- **API**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **Health Check**: http://localhost:8080/actuator/health
+- **MailHog**: http://localhost:8025 (email testing)
+- **pgAdmin**: http://localhost:5050 (database admin - optional)
+
+## 🔐 Authentication
+
+The API uses JWT tokens for authentication.
+
+### Register a new user
+
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "johndoe",
+    "email": "john@example.com",
+    "password": "securePassword123",
+    "firstName": "John",
+    "lastName": "Doe"
+  }'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "usernameOrEmail": "johndoe",
+    "password": "securePassword123"
+  }'
+```
+
+### Using the token
+
+```bash
+curl http://localhost:8080/api/v1/cart \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+## 📚 API Endpoints
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/register` | Register new user |
+| POST | `/api/v1/auth/login` | Login |
+| POST | `/api/v1/auth/refresh` | Refresh token |
+| POST | `/api/v1/auth/logout` | Logout |
+
+### Products
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/products` | List products (paginated) |
+| GET | `/api/v1/products/{id}` | Get product by ID |
+| GET | `/api/v1/products/slug/{slug}` | Get product by slug |
+| GET | `/api/v1/products/search?q=` | Search products |
+| GET | `/api/v1/products/featured` | Get featured products |
+| POST | `/api/v1/products` | Create product (Seller) |
+
+### Cart
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/cart` | Get cart |
+| POST | `/api/v1/cart/items` | Add to cart |
+| PUT | `/api/v1/cart/items/{id}` | Update quantity |
+| DELETE | `/api/v1/cart/items/{id}` | Remove item |
+| DELETE | `/api/v1/cart` | Clear cart |
+
+### Orders
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/orders` | Create order |
+| GET | `/api/v1/orders` | Get user orders |
+| GET | `/api/v1/orders/{id}` | Get order by ID |
+| POST | `/api/v1/orders/{id}/cancel` | Cancel order |
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DB_HOST` | PostgreSQL host | localhost |
+| `DB_PORT` | PostgreSQL port | 5432 |
+| `DB_NAME` | Database name | ecommerce |
+| `DB_USERNAME` | Database user | postgres |
+| `DB_PASSWORD` | Database password | postgres |
+| `REDIS_HOST` | Redis host | localhost |
+| `REDIS_PORT` | Redis port | 6379 |
+| `JWT_SECRET` | JWT signing secret | (required) |
+| `STRIPE_API_KEY` | Stripe API key | - |
+| `PAYPAL_CLIENT_ID` | PayPal client ID | - |
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+mvn test
+
+# Run with coverage report
+mvn verify
+
+# Run integration tests only
+mvn test -Dtest=*IntegrationTest
+```
+
+## 🐳 Docker
+
+### Build image
+
+```bash
+docker build -t ecommerce-backend .
+```
+
+### Run with Docker Compose
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f app
+
+# Stop all services
+docker-compose down
+```
+
+## 📊 Monitoring
+
+- **Health**: `/actuator/health`
+- **Info**: `/actuator/info`
+- **Metrics**: `/actuator/metrics`
+
+## 🔒 Security Features
+
+- JWT-based authentication
+- BCrypt password hashing (strength 12)
+- Role-based access control (ADMIN, CUSTOMER, SELLER)
+- Refresh token rotation
+- Account lockout after failed attempts
+- SQL injection prevention (JPA parameterized queries)
+- Input validation
+- CORS configuration
+
+## 📁 Project Structure
+
+```
+backend/
+├── src/
+│   ├── main/
+│   │   ├── java/com/ecommerce/
+│   │   └── resources/
+│   │       ├── application.yml
+│   │       ├── application-dev.yml
+│   │       ├── application-prod.yml
+│   │       └── db/migration/     # Flyway SQL migrations
+│   └── test/
+├── Dockerfile
+├── docker-compose.yml
+├── pom.xml
+└── README.md
+```
+
+## 📄 License
+
+MIT License
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request

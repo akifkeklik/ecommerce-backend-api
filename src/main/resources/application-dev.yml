@@ -1,0 +1,46 @@
+# Development Profile Configuration
+spring:
+  config:
+    activate:
+      on-profile: dev
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce_dev
+    username: postgres
+    password: postgres
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  
+  mail:
+    host: localhost
+    port: 1025
+
+# JWT Configuration for Development
+jwt:
+  secret: dev-secret-key-for-jwt-token-generation-min-32-characters-long
+
+# Payment Configuration (Sandbox)
+payment:
+  stripe:
+    api-key: sk_test_your_stripe_test_key
+  paypal:
+    mode: sandbox
+
+# Swagger enabled in dev
+springdoc:
+  swagger-ui:
+    enabled: true
+
+# More verbose logging in dev
+logging:
+  level:
+    com.ecommerce: DEBUG
+    org.springframework.web: DEBUG
